@@ -7,7 +7,7 @@ local CustomNames = C_AddOns.IsAddOnLoaded("CustomNames") and LibStub and LibStu
 ---@return boolean isMainRole
 local function getScoreForRioProfile(profile, assignedRole)
     if not profile.mythicKeystoneProfile then
-        return nil, 0 
+        return nil, 0
     end
     if not GFIO.db.profile.useMainInfo then
         return nil, profile.mythicKeystoneProfile.currentScore
@@ -26,7 +26,7 @@ local function getScoreForRioProfile(profile, assignedRole)
             end
         end
     end
-    return nil, profile.mythicKeystoneProfile.currentScore , false  
+    return nil, profile.mythicKeystoneProfile.currentScore , false
 end
 ---comment helper to get Progress from a RaiderIo profile
 ---@param profile table
@@ -40,7 +40,7 @@ local function getProgressForRioProfile(profile, instanceID, activeDifficulty)
     if not profile.raidProfile or not profile.raidProfile.raidProgress then
         return 0, nil, nil
     end
-    local bosscount = 0 
+    local bosscount = 0
     ---@class bossData
     local charData = {
         bosskills = 0,
@@ -56,7 +56,7 @@ local function getProgressForRioProfile(profile, instanceID, activeDifficulty)
     for _,raid in pairs(profile.raidProfile.raidProgress) do
         if raid.raid.id == instanceID then -- this actually breaks in awakened seasons we might need to do sth about that
             bosscount = raid.raid.bossCount
-            local kills = 0 
+            local kills = 0
             for _, value in pairs (raid.progress) do
                 if value.difficulty == activeDifficulty then
                     kills = value.kills
@@ -89,7 +89,7 @@ local function getProgressForRioProfile(profile, instanceID, activeDifficulty)
             end
         end
     end
-    return bosscount , charData, maindata 
+    return bosscount , charData, maindata
 end
 
 
@@ -100,9 +100,9 @@ end
 ---@return string shortLanguage
 local function getScoreForLeader(searchResult)
     local leaderName = searchResult.leaderName
-    if not leaderName and searchResult.leaderOverallDungeonScore and not searchResult.isDelisted then 
+    if not leaderName and searchResult.leaderOverallDungeonScore and not searchResult.isDelisted then
         return nil, searchResult.leaderOverallDungeonScore , ""
-    elseif not leaderName then 
+    elseif not leaderName then
         return nil, 0 , ""
     end
     local leaderFullName = leaderName:find("-")~=nil and leaderName or leaderName.."-"..GetNormalizedRealmName()
@@ -143,7 +143,7 @@ local function getProgressForLeader(searchResult)
             raidZone = GFIO.RAIDS[activityID]
         end
     end
-    if not leaderName or searchResult.isDelisted or not raidZone or raidZone == {} or leaderName:find("-")==nil and not GetNormalizedRealmName() then 
+    if not leaderName or searchResult.isDelisted or not raidZone or raidZone == {} or leaderName:find("-")==nil and not GetNormalizedRealmName() then
         return nil, nil, nil, nil, nil
     end
     local leaderFullName = leaderName:find("-")~=nil and leaderName or leaderName.."-"..GetNormalizedRealmName()
@@ -151,7 +151,7 @@ local function getProgressForLeader(searchResult)
     local shortLanguage  = ""
     if leaderFullName then
         local realm = leaderFullName:match("-(.+)") or GetNormalizedRealmName()
-        assert(realm, "No realm found for player: "..leaderFullName)    
+        assert(realm, "No realm found for player: "..leaderFullName)
         local language = realm and GFIO.REALMS[realm]
         assert(language, "No language found for realm: "..realm)
         shortLanguage = GFIO.LANGUAGES[language] or ""
@@ -214,7 +214,7 @@ local function colorRaidProgress(string, difficulty)
     local r,g,b,a = getProgressColor(difficulty)
     local color = CreateColor(r,g,b,a)
     local colorHexString = color:GenerateHexColor()
-    return WrapTextInColorCode(string, colorHexString)  
+    return WrapTextInColorCode(string, colorHexString)
 end
 
 ---@param progress string
@@ -292,7 +292,7 @@ local function updateMplusData(searchResult,entry)
             activityName = dungeon.shortName
         end
     end
-    
+
 
     if GFIO.db.profile.showInfoInActivityName then
         if additionalInfo ~= "" then
@@ -314,7 +314,7 @@ local function updateMplusData(searchResult,entry)
     if GFIO.db.profile.groupNameBeforeScore then
         if highestKey and highestKey~="" then
             if additionalInfo ~= "" then
-                return orginalText.." - ("..highestKey.. ") - "..additionalInfo 
+                return orginalText.." - ("..highestKey.. ") - "..additionalInfo
             else
                 return orginalText.." - ("..highestKey.. ")"
             end
@@ -358,9 +358,9 @@ local function updateRaidData(searchResult,activityInfoTable,entry)
         if charData.bosskills ~= 0 then
             additionalInfo = additionalInfo.. colorRaidProgress("("..charData.highestDifficultyKilledBosses.."/"..maxBosses..")", charData.difficulty).. " "
         else
-            additionalInfo = additionalInfo.. colorRaidProgress(charData.highestDifficultyKilledBosses.."/"..maxBosses, charData.difficulty).. " "    
+            additionalInfo = additionalInfo.. colorRaidProgress(charData.highestDifficultyKilledBosses.."/"..maxBosses, charData.difficulty).. " "
         end
-        
+
     end
     if GFIO.db.profile.useMainInfo and GFIO.db.profile.addHighestDifficulty and mainData and mainData.difficulty and difficulty and mainData.difficulty >= difficulty and mainData.highestDifficultyKilledBosses~= 0 then
         additionalInfo = additionalInfo.. colorRaidProgress("["..mainData.highestDifficultyKilledBosses.."/"..maxBosses.."]", mainData.difficulty).. " "
@@ -391,10 +391,10 @@ local GROUP_FINDER_CATEGORY_ID_RAIDS = 3
 ---@param entry table
 local function updateLfgListEntry(entry, ...)
     if issecretvalue(entry) or not GFIO.db.profile.addScoreToGroup and not GFIO.db.profile.showLanguage then return end
-    
+
     local searchResultID = entry.GetData().resultID
     local searchResult = C_LFGList.GetSearchResultInfo(searchResultID)
-    
+
     for _,activitiID in pairs (searchResult.activityIDs) do
         local activityInfoTable = C_LFGList.GetActivityInfoTable(activitiID)
         if (not LFGListFrame.SearchPanel:IsShown() or searchResult.isDelisted) then
@@ -441,20 +441,20 @@ end
 ---@param b number
 ---@return boolean
 local function compareSearchEntriesMplus(a,b)
-    if not a then 
+    if not a then
         return false
-    elseif not b then 
+    elseif not b then
         return true
     end
     local _, appStatusA, pendingStatusA, appDurationA = C_LFGList.GetApplicationInfo(a)
     local _, appStatusB, pendingStatusB, appDurationB = C_LFGList.GetApplicationInfo(b)
     local isApplicationA = appStatusA ~= "none" or pendingStatusA or false
     local isApplicationB= appStatusB ~= "none" or pendingStatusB or false
-    if isApplicationA ~= isApplicationB then 
+    if isApplicationA ~= isApplicationB then
         return not isApplicationB
     end
-    if appDurationA ~= appDurationB then 
-        return appDurationA > appDurationB 
+    if appDurationA ~= appDurationB then
+        return appDurationA > appDurationB
     end
     local searchResultA = C_LFGList.GetSearchResultInfo(a)
     local searchResultB = C_LFGList.GetSearchResultInfo(b)
@@ -480,7 +480,7 @@ local function compareSearchEntriesMplus(a,b)
     if searchResultA.numCharFriends ~= searchResultB.numCharFriends then
         return searchResultA.numCharFriends > searchResultB.numCharFriends
     end
-   
+
     local mainScoreA, scoreA = getScoreForLeader(searchResultA)
     if mainScoreA and (not scoreA or mainScoreA>scoreA) then
         scoreA = mainScoreA
@@ -515,11 +515,11 @@ local function compareSearchEntriesRaid(a,b)
     local _, appStatusB, pendingStatusB, appDurationB = C_LFGList.GetApplicationInfo(b)
     local isApplicationA = appStatusA ~= "none" or pendingStatusA or false
     local isApplicationB= appStatusB ~= "none" or pendingStatusB or false
-    if isApplicationA ~= isApplicationB then 
-        return not isApplicationB 
+    if isApplicationA ~= isApplicationB then
+        return not isApplicationB
     end
-    if appDurationA ~= appDurationB then 
-        return appDurationA > appDurationB 
+    if appDurationA ~= appDurationB then
+        return appDurationA > appDurationB
     end
 
     local searchResultA = C_LFGList.GetSearchResultInfo(a)
@@ -527,7 +527,7 @@ local function compareSearchEntriesRaid(a,b)
     if searchResultA.hasSelf and not searchResultB.hasSelf then
         return true
     elseif searchResultB.hasSelf and not searchResultA.hasSelf then
-        return false   
+        return false
     elseif searchResultA.isDelisted and searchResultB.isDelisted then
         return a>b -- avoid race condition by randomly sorting the searchResultId not like it matters what we do here
     elseif not searchResultA.isDelisted and searchResultB.isDelisted then
@@ -544,11 +544,11 @@ local function compareSearchEntriesRaid(a,b)
                 assert(GFIO.ACTIVITY_ORDER[activityIDA] , "Activity ID has no order: "..activityIDA)
                 assert(GFIO.ACTIVITY_ORDER[activityIDB] , "Activity ID has no order: "..activityIDB)
             end
-            if not GFIO.ACTIVITY_ORDER[activityIDA] or not GFIO.ACTIVITY_ORDER[activityIDB] 
+            if not GFIO.ACTIVITY_ORDER[activityIDA] or not GFIO.ACTIVITY_ORDER[activityIDB]
                 or not GFIO.RAIDS[activityIDA] or not GFIO.RAIDS[activityIDB] then
                 return activityIDA > activityIDB
             end
-        
+
             if activityIDA ~= activityIDB then
                 return GFIO.sortFunc(GFIO.ACTIVITY_ORDER[activityIDA], GFIO.ACTIVITY_ORDER[activityIDB])
             end
@@ -556,7 +556,7 @@ local function compareSearchEntriesRaid(a,b)
     end
     local _, charDataA, mainDataA, _, difficultyA = getProgressForLeader(searchResultA)
     local _, charDataB, mainDataB, _, difficultyB = getProgressForLeader(searchResultB)
-    
+
     if not charDataA and not charDataB then
         return a>b  -- avoid race condition by randomly sorting the searchResultId not like it matters what we do here
     elseif charDataA ~= charDataB then
@@ -579,13 +579,13 @@ local function compareSearchEntriesRaid(a,b)
             return GFIO.sortFunc(charDataA.bosskills,charDataB.bosskills)
         end
     end
-    if GFIO.db.profile.useMainInfo and mainDataA and charDataA and (mainDataA.difficulty >difficultyA or (mainDataA.difficulty == difficultyA and 
-        (mainDataA.highestDifficultyKilledBosses>charDataA.highestDifficultyKilledBosses 
+    if GFIO.db.profile.useMainInfo and mainDataA and charDataA and (mainDataA.difficulty >difficultyA or (mainDataA.difficulty == difficultyA and
+        (mainDataA.highestDifficultyKilledBosses>charDataA.highestDifficultyKilledBosses
             or mainDataA.bosskills>charDataA.bosskills))) then
         charDataA = mainDataA
     end
-    if GFIO.db.profile.useMainInfo and mainDataB and charDataB and (mainDataB.difficulty>difficultyB or (mainDataB.difficulty == difficultyB and 
-        (mainDataB.highestDifficultyKilledBosses>charDataB.highestDifficultyKilledBosses 
+    if GFIO.db.profile.useMainInfo and mainDataB and charDataB and (mainDataB.difficulty>difficultyB or (mainDataB.difficulty == difficultyB and
+        (mainDataB.highestDifficultyKilledBosses>charDataB.highestDifficultyKilledBosses
             or mainDataB.bosskills>charDataB.bosskills))) then
         charDataB = mainDataB
     end
@@ -607,7 +607,7 @@ local function sortSearchResults(entry)
     if not entry.categoryID then -- we are in PGF sorting
         local results = CopyTable(entry)
         if LFGListFrame.CategorySelection.selectedCategory == GROUP_FINDER_CATEGORY_ID_DUNGEONS then
-            table.sort(results, compareSearchEntriesMplus) 
+            table.sort(results, compareSearchEntriesMplus)
         elseif LFGListFrame.CategorySelection.selectedCategory == GROUP_FINDER_CATEGORY_ID_RAIDS then
             table.sort(results, compareSearchEntriesRaid)
         end
@@ -615,7 +615,7 @@ local function sortSearchResults(entry)
     end
     local results = CopyTable(entry.results)
     if entry.categoryID == GROUP_FINDER_CATEGORY_ID_DUNGEONS then
-        table.sort(results, compareSearchEntriesMplus) 
+        table.sort(results, compareSearchEntriesMplus)
     elseif entry.categoryID == GROUP_FINDER_CATEGORY_ID_RAIDS then
         table.sort(results, compareSearchEntriesRaid)
     end
@@ -679,7 +679,7 @@ local function getApplicantInfoForKeys(applicantID, numMember)
     local shortLanguage  = ""
     if name then
         local realm = name:match("-(.+)") or GetNormalizedRealmName() or GFIO.PLAYER_NORMALIZED_REALM
-        assert(realm, "No realm found for player: "..name)    
+        assert(realm, "No realm found for player: "..name)
         local language = GFIO.REALMS[realm]
         assert(language, "No language found for realm: "..realm)
         shortLanguage = language and GFIO.LANGUAGES[language] or ""
@@ -721,7 +721,7 @@ local function getApplicantInfoForRaid(applicantID, numMember, entryData)
         shortLanguage = language and GFIO.LANGUAGES[language] or ""
     end
     for _,activityID in pairs (entryData.activityIDs) do
-       
+
         if GFIO.RAIDS[activityID] and RaiderIO and RaiderIO.GetProfile(name,factionGroup) then
             local profile = RaiderIO.GetProfile(name,factionGroup)
             local raidZone = GFIO.RAIDS[activityID]
@@ -754,7 +754,7 @@ local function getScoreForApplication(applicationID)
     local groupExceedsMembers = applicantInfo.numMembers > (dpsSpots + tankSpots + healerSpots)
     local everyoneIsMain = true
     local hasLeaver = false
-    for i= 0,applicantInfo.numMembers do 
+    for i= 0,applicantInfo.numMembers do
         local applicantMainScore, applicantScore, applicantIlvl, specID, name,_, tank, healer, damage, isMainRole, _, _, isLeaver = getApplicantInfoForKeys(applicationID,i)
         if tank and not healer and not damage then
             tankSpots = tankSpots - 1
@@ -778,7 +778,7 @@ local function getScoreForApplication(applicationID)
         if not isMainRole then
             everyoneIsMain = false
         end
-    end 
+    end
     score = score/applicantInfo.numMembers
     ilvl = ilvl/applicantInfo.numMembers
     if groupExceedsMembers then
@@ -822,7 +822,7 @@ local function compareApplicantsDungeons(a,b)
         end
         return GFIO.sortFunc(ilvlA,ilvlB)
     end
-    return GFIO.sortFunc(scoreA,scoreB) 
+    return GFIO.sortFunc(scoreA,scoreB)
 end
 ---comment helper to get the raidProgress for an application
 ---@param applicationID number
@@ -854,7 +854,7 @@ local function getProgressForApplication(applicationID)
     local healerSpots = 1-group.HEALER
     local groupExceedsMembers = applicantInfo.numMembers > (dpsSpots + tankSpots + healerSpots)
     local maxAvailableBosses
-    for i= 0,applicantInfo.numMembers do 
+    for i= 0,applicantInfo.numMembers do
         local maxBosses,charData, mainData, itemLevel, specID, name, shortLanguage, tank, healer, damage = getApplicantInfoForRaid(applicationID,i,entryData)
         if not maxAvailableBosses then
             maxAvailableBosses = maxBosses
@@ -866,7 +866,7 @@ local function getProgressForApplication(applicationID)
         elseif not tank and not healer and damage then
             dpsSpots = dpsSpots - 1
         end
-        if mainData and mainData.difficulty and charData and charData.difficulty and mainData.difficulty > charData.difficulty or 
+        if mainData and mainData.difficulty and charData and charData.difficulty and mainData.difficulty > charData.difficulty or
             mainData and charData and mainData.difficulty == charData.difficulty and mainData.highestDifficultyKilledBosses > charData.highestDifficultyKilledBosses or
             mainData and charData and mainData.difficulty == charData.difficulty and mainData.bosskills > charData.bosskills then
             charData = mainData
@@ -882,7 +882,7 @@ local function getProgressForApplication(applicationID)
         if specID and GFIO.db.profile.spec[specID] then
             specIDs = true
         end
-    end 
+    end
     ilvl = ilvl/applicantInfo.numMembers
     if not maxAvailableBosses then
         if groupExceedsMembers then
@@ -893,9 +893,9 @@ local function getProgressForApplication(applicationID)
             return 0, 0, ilvl, specIDs, true
         end
     end
-    -- this looks like magic but what we actually do is we just add all the killed bosses multiplied by their difficulty. 
-    -- This means if you kill the last boss of a 8/8 raid on mythic it's "worth" 24 kills. 
-    -- If we now want to go the other direction we divide total number of kills by max bosses 
+    -- this looks like magic but what we actually do is we just add all the killed bosses multiplied by their difficulty.
+    -- This means if you kill the last boss of a 8/8 raid on mythic it's "worth" 24 kills.
+    -- If we now want to go the other direction we divide total number of kills by max bosses
     -- to get difficulty and use modulo to get amount of bosses killed on said difficulty.
     local avgKilledBosses = killedBosses/applicantInfo.numMembers % maxAvailableBosses
     local avgDifficulty = floor(killedBosses/applicantInfo.numMembers/maxAvailableBosses)
@@ -942,7 +942,7 @@ local function sortApplications(applicants)
     local entryData = C_LFGList.GetActiveEntryInfo()
     for _, activityID in pairs(entryData.activityIDs) do
         local activityInfoTable= C_LFGList.GetActivityInfoTable(activityID)
-        if activityInfoTable.categoryID == GROUP_FINDER_CATEGORY_ID_DUNGEONS then 
+        if activityInfoTable.categoryID == GROUP_FINDER_CATEGORY_ID_DUNGEONS then
             table.sort(applicants, compareApplicantsDungeons)
         elseif activityInfoTable.categoryID == GROUP_FINDER_CATEGORY_ID_RAIDS then
             table.sort(applicants, compareApplicantsRaid)
@@ -995,8 +995,8 @@ local function updateApplicationForDungeons(member, appID, memberIdx)
             member.Name:SetText(customName)
         end
     end
-    if raceID and GFIO.db.profile.showRaceIcon then   
-        local raceInfo = C_CreatureInfo.GetRaceInfo(raceID) 
+    if raceID and GFIO.db.profile.showRaceIcon then
+        local raceInfo = C_CreatureInfo.GetRaceInfo(raceID)
         local clientFileString = GFIO.RaceOverwrite[raceID] and GFIO.RaceOverwrite[raceID].iconstring or  raceInfo.clientFileString
         member.Name:SetText(member.Name:GetText().." "..CreateAtlasMarkup("raceicon-"..clientFileString.."-female", 16, 16))
     end
@@ -1056,10 +1056,10 @@ local function updateApplicationForDungeons(member, appID, memberIdx)
         ratingInfoFrame.AdditionalInfo:SetPoint("BOTTOM",member,"BOTTOM",0,0)
         ratingInfoFrame.AdditionalInfo:SetPoint("LEFT",member.Name,"LEFT",2,0)
         ratingInfoFrame.AdditionalInfo:SetPoint("RIGHT",member.RoleIcon1,"RIGHT",2,0)
-        ratingInfoFrame.AdditionalInfo:SetText(additionalInfo) 
+        ratingInfoFrame.AdditionalInfo:SetText(additionalInfo)
         member.Name:SetPoint("TOP",member,"TOP",0,0)
     else
-        ratingInfoFrame.AdditionalInfo:SetText("") 
+        ratingInfoFrame.AdditionalInfo:SetText("")
     end
     ratingInfoFrame:SetParent(member)
     ratingInfoFrame:SetPoint("TOP",member,"TOP")
@@ -1090,7 +1090,7 @@ end
 ---@param member frame
 ---@param appID integer
 ---@param memberIdx integer
-local function updateApplicationForRaids(member, appID, memberIdx) 
+local function updateApplicationForRaids(member, appID, memberIdx)
     local applicantInfo = C_LFGList.GetApplicantInfo(appID)
     local entryData = C_LFGList.GetActiveEntryInfo()
     local maxBosses,charData,mainData, itemLevel, specID, name, shortLanguage, _, _, _ = getApplicantInfoForRaid(appID, memberIdx, entryData)
@@ -1120,9 +1120,9 @@ local function updateApplicationForRaids(member, appID, memberIdx)
                 if charData.bosskills ~= 0 then
                     additionalInfo = additionalInfo.. colorRaidProgress("("..charData.highestDifficultyKilledBosses.."/"..maxBosses..")", charData.difficulty).. " "
                 else
-                    additionalInfo = additionalInfo.. colorRaidProgress(charData.highestDifficultyKilledBosses.."/"..maxBosses, charData.difficulty).. " "    
+                    additionalInfo = additionalInfo.. colorRaidProgress(charData.highestDifficultyKilledBosses.."/"..maxBosses, charData.difficulty).. " "
                 end
-                
+
             end
             if GFIO.db.profile.useMainInfo and GFIO.db.profile.addHighestDifficulty and mainData and mainData.difficulty and difficulty and mainData.difficulty >= difficulty and mainData.highestDifficultyKilledBosses~= 0 then
                 additionalInfo = additionalInfo.. colorRaidProgress("["..mainData.highestDifficultyKilledBosses.."/"..maxBosses.."]", mainData.difficulty).. " "
@@ -1135,10 +1135,10 @@ local function updateApplicationForRaids(member, appID, memberIdx)
         ratingInfoFrame.AdditionalInfo:SetPoint("BOTTOM",member,"BOTTOM",0,0)
         ratingInfoFrame.AdditionalInfo:SetPoint("LEFT",member.Name,"LEFT",2,0)
         ratingInfoFrame.AdditionalInfo:SetPoint("RIGHT",member.RoleIcon1,"RIGHT",2,0)
-        ratingInfoFrame.AdditionalInfo:SetText(additionalInfo) 
+        ratingInfoFrame.AdditionalInfo:SetText(additionalInfo)
         member.Name:SetPoint("TOP",member,"TOP",0,0)
     else
-        ratingInfoFrame.AdditionalInfo:SetText("") 
+        ratingInfoFrame.AdditionalInfo:SetText("")
     end
     ratingInfoFrame:SetParent(member)
     ratingInfoFrame:SetPoint("TOP",member,"TOP")
@@ -1166,7 +1166,7 @@ local function updateApplicationListEntry(member, appID, memberIdx)
         for _,activityID in pairs (entryData.activityIDs) do
         local activityInfoTable= C_LFGList.GetActivityInfoTable(activityID)
         -- could maybe instead show something different we'll see
-        if activityInfoTable.categoryID == GROUP_FINDER_CATEGORY_ID_DUNGEONS then 
+        if activityInfoTable.categoryID == GROUP_FINDER_CATEGORY_ID_DUNGEONS then
             updateApplicationForDungeons(member, appID, memberIdx)
         elseif activityInfoTable.categoryID == GROUP_FINDER_CATEGORY_ID_RAIDS then
             updateApplicationForRaids(member, appID, memberIdx)
