@@ -217,6 +217,13 @@ local function colorRaidProgress(string, difficulty)
     return WrapTextInColorCode(string, colorHexString)  
 end
 
+---@param progress string
+---@param difficulty number
+---@return string
+local function formatBracketedRaidProgress(progress, difficulty)
+    return colorRaidProgress("["..progress.."]", difficulty)
+end
+
 ---comment helper to wrap a string in the raiderio score color
 ---@param score number
 ---@return string
@@ -228,6 +235,13 @@ local function colorScore(score)
     return coloredScore
 
 end
+
+---@param score number
+---@return string
+local function formatBracketedScore(score)
+    return "["..colorScore(score).."]"
+end
+
 ---comment helper to adjust group titles for mplus
 ---@param searchResult LfgSearchResultData
 ---@param entry table
@@ -262,12 +276,12 @@ local function updateMplusData(searchResult,entry)
     if GFIO.db.profile.addScoreToGroup then
         if GFIO.db.profile.useMainInfo and mainScore and score and mainScore>score then
             if GFIO.db.profile.showCurrentScoreInGroup and score> 0 then
-                additionalInfo = additionalInfo.. "["..colorScore(mainScore).."] "..colorScore(score)
+                additionalInfo = additionalInfo.. formatBracketedScore(mainScore).." "..formatBracketedScore(score)
             else
-                additionalInfo = additionalInfo.."["..colorScore(mainScore).."]" 
+                additionalInfo = additionalInfo..formatBracketedScore(mainScore)
             end
         elseif score and score>0 then
-            additionalInfo = additionalInfo..colorScore(score)
+            additionalInfo = additionalInfo..formatBracketedScore(score)
         end
     end
 
@@ -312,12 +326,12 @@ local function updateMplusData(searchResult,entry)
     else
         if highestKey and highestKey~="" then
             if additionalInfo ~= "" then
-                return "("..highestKey..") "..additionalInfo.." - "..orginalText
+                return "("..highestKey..") "..additionalInfo.." "..orginalText
             else
                 return "("..highestKey..") "..orginalText
             end
         elseif additionalInfo ~= "" then
-            return additionalInfo.." - "..orginalText
+            return additionalInfo.." "..orginalText
         else
             return orginalText
         end
@@ -338,7 +352,7 @@ local function updateRaidData(searchResult,activityInfoTable,entry)
         additionalInfo = shortLanguage.. " "
     end
     if charData and charData.bosskills and charData.bosskills~=0 and maxBosses and maxBosses ~=0 then
-        additionalInfo = additionalInfo .. colorRaidProgress(charData.bosskills.."/"..maxBosses, difficulty).. " "
+        additionalInfo = additionalInfo .. formatBracketedRaidProgress(charData.bosskills.."/"..maxBosses, difficulty).. " "
     end
     if GFIO.db.profile.addHighestDifficulty and charData and charData.difficulty and difficulty and charData.difficulty ~= difficulty and charData.highestDifficultyKilledBosses~= 0 then
         if charData.bosskills ~= 0 then
