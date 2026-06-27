@@ -1068,12 +1068,11 @@ local function updateApplicationForDungeons(member, appID, memberIdx)
     if not isMainRole and GFIO.db.profile.useOfWrongRoleHighlight then
         textAddition  = "\124T135768:0\124t"
     end
+    ratingInfoFrame.Rating:SetTextColor(1, 1, 1, 1)
     if mainScore then
-        ratingInfoFrame.Rating:SetText("["..mainScore.."] "..textAddition)
-        ratingInfoFrame.Rating:SetTextColor(getScoreColor(mainScore))
+        ratingInfoFrame.Rating:SetText(formatBracketedScore(mainScore).." "..textAddition)
     else
-        ratingInfoFrame.Rating:SetText(score.." "..textAddition)
-        ratingInfoFrame.Rating:SetTextColor(getScoreColor(score))
+        ratingInfoFrame.Rating:SetText(colorScore(score).." "..textAddition)
     end
     ratingInfoFrame.Rating:Show()
     ratingInfoFrame.Rating:SetPoint("LEFT",member.Rating,"LEFT")
